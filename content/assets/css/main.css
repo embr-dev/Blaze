@@ -1,0 +1,20 @@
+@import url('https://embernetwork.github.io/assets/css/main.css');
+
+body,
+html {
+    background-color: #fff;
+    color: #000;
+    height: auto;
+    width: auto;
+}
+
+.logs {
+    margin: 15px;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #727272;
+}
+
+.log {
+    color: #fff;
+}
