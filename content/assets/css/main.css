@@ -12,9 +12,50 @@ html {
     margin: 15px;
     border-radius: 10px;
     padding: 20px;
-    background-color: #727272;
+    box-shadow: 2px 2px 8px #111;
+    min-height: 20px;
 }
 
 .log {
+    color: #000;
+}
+
+.error {
+    color: #ff6666;
+}
+
+.hidden {
+    display: none;
+}
+
+.controls {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 30px;
+    background: #111;
+    padding: 3px 8px 3px 8px;
+    border-radius: 10px;
+}
+
+.controls:not(.hidden) {
+    display: flex;
+}
+
+.controls>.item {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.controls>.item>i {
+    font-size: 30px;
     color: #fff;
+}
+
+.controls>.item>i#stop {
+    color: #ff6666;
+}
+
+.controls>.item>i#done {
+    color: #aacf72;
 }

@@ -26,7 +26,7 @@ app.post('/form', (req, res) => {
                     const data = new Buffer.from(await file.arrayBuffer());
 
                     const url = req.baseUrl + req.path.replace(req.baseUrl + req.path.split('\\').pop().split('/').pop(), '');
-                    fs.mkdir(`./game${url}`, { recursive: true }, (e) => {
+                    fs.mkdir(`./downloads${url}`, { recursive: true }, (e) => {
                         if (e) {
                             conn.send(JSON.stringify({
                                 type: 'error',
@@ -46,9 +46,8 @@ app.post('/form', (req, res) => {
                     }));
 
                     if (fs.existsSync(url)) {
-                        console.log(file.status)
                         if (file.status != 404) {
-                            fs.writeFileSync(`./game${req.baseUrl + req.path}`, data);
+                            fs.writeFileSync(`./downloads${req.baseUrl + req.path}`, data);
                         } else {
                             conn.send(JSON.stringify({
                                 type: 'error',
@@ -57,7 +56,7 @@ app.post('/form', (req, res) => {
                             }));
                         }
                     } else {
-                        fs.mkdir(`./game${url}`, { recursive: true }, (e) => {
+                        fs.mkdir(`./downloads${url}`, { recursive: true }, (e) => {
                             if (e) {
                                 conn.send(JSON.stringify({
                                     type: 'error',
@@ -96,8 +95,19 @@ app.post('/form', (req, res) => {
             })
 
             blazeProxyServer.addListener('listening', (e) => {
-                return res.json({ error: false, port: blazeProxyServer.address().port });
+                if (blazeProxyServer.listening === true) {
+                    return res.json({ error: false, port: blazeProxyServer.address().port });
+                }
             })
+
+            conn.omessage = (e) => {
+                console.log(e);
+                /*if (JSON.parse(e.data).action == 'stop') {
+
+                } else if (JSON.parse(e.data).action == 'done') {
+
+                }*/
+            }
         });
     }
 })

@@ -1,6 +1,7 @@
 const form = document.querySelector('form');
 const error = document.querySelector('.red');
 const logs = document.querySelector('.logs');
+const controls = document.querySelector('.controls');
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -26,6 +27,7 @@ form.addEventListener('submit', (e) => {
                     error.textContent = '';
                     form.remove();
                     logs.classList.remove('hidden');
+                    controls.classList.remove('hidden');
 
                     const win = window.open(`http://localhost:${res.port}/${e.srcElement.children.filename.value}`, 'popup', `left=${window.screen.width},top=0,width=600,height=700`);
                     win.focus();
@@ -33,8 +35,33 @@ form.addEventListener('submit', (e) => {
                     ws.onmessage = (e) => {
                         const log = document.createElement('div');
                         log.textContent = JSON.parse(e.data).msg;
+                        log.classList = JSON.parse(e.data).type;
                         logs.appendChild(log);
+                        
+                        window.scrollTo(0, document.body.offsetHeight);
                     }
+
+                    controls.querySelector('#stop').addEventListener('click', (e) => {
+                        ws.send(JSON.stringify({
+                            action: 'stop'
+                        }));
+
+                        win.close();
+
+                        logs.classList.add('hidden');
+                        controls.classList.add('hidden');
+                    });
+
+                    controls.querySelector('#done').addEventListener('click', (e) => {
+                        ws.send(JSON.stringify({
+                            action: 'done'
+                        }));
+
+                        win.close();
+
+                        logs.classList.add('hidden');
+                        controls.classList.add('hidden');
+                    });
                 } else {
                     error.textContent = 'The server did not provide a port';
                 }
