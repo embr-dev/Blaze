@@ -13,14 +13,16 @@ html {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 2px 2px 8px #111;
-    min-height: 20px;
+    min-height: 35px;
 }
 
 .log {
+    margin: auto;
     color: #000;
 }
 
 .error {
+    margin: auto;
     color: #ff6666;
 }
 
@@ -58,4 +60,8 @@ html {
 
 .controls>.item>i#done {
     color: #aacf72;
+}
+
+form {
+    margin: 20px;
 }

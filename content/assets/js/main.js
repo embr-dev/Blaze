@@ -30,15 +30,39 @@ form.addEventListener('submit', (e) => {
                     controls.classList.remove('hidden');
 
                     const win = window.open(`http://localhost:${res.port}/${e.srcElement.children.filename.value}`, 'popup', `left=${window.screen.width},top=0,width=600,height=700`);
+                    var done = false;
                     win.focus();
 
+                    const close = setInterval(() => {
+                        if (win.closed && !done) {
+                            clearInterval(close);
+
+                            ws.send(JSON.stringify({
+                                action: 'stop'
+                            }));
+
+                            location.reload();
+                        }
+                    }, 100)
+
                     ws.onmessage = (e) => {
-                        const log = document.createElement('div');
-                        log.textContent = JSON.parse(e.data).msg;
-                        log.classList = JSON.parse(e.data).type;
-                        logs.appendChild(log);
-                        
-                        window.scrollTo(0, document.body.offsetHeight);
+                        const data = JSON.parse(e.data);
+
+                        if (data.type == 'log' || data.type == 'error') {
+                            const log = document.createElement('div');
+                            log.textContent = data.msg;
+                            log.classList = data.type;
+                            logs.appendChild(log);
+
+                            window.scrollTo(0, document.body.offsetHeight);
+                        } else if (data.type == 'action') {
+                            if (data.action === 'closed') {
+                                win.close();
+
+                                logs.classList.add('hidden');
+                                controls.classList.add('hidden');
+                            }
+                        }
                     }
 
                     controls.querySelector('#stop').addEventListener('click', (e) => {
@@ -46,21 +70,17 @@ form.addEventListener('submit', (e) => {
                             action: 'stop'
                         }));
 
-                        win.close();
-
-                        logs.classList.add('hidden');
-                        controls.classList.add('hidden');
+                        location.reload();
                     });
 
                     controls.querySelector('#done').addEventListener('click', (e) => {
+                        done = true;
+                        
                         ws.send(JSON.stringify({
                             action: 'done'
                         }));
 
-                        win.close();
-
-                        logs.classList.add('hidden');
-                        controls.classList.add('hidden');
+                        error.textContent = 'Your website has been downloaded, check the /downloads folder inside the blaze server directory';
                     });
                 } else {
                     error.textContent = 'The server did not provide a port';
