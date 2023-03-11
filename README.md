@@ -7,7 +7,7 @@ git clone https://github.com/EmberNetwork/Blaze.git
 ```
 Make sure you have [nodejs](https://nodejs.org) installed for these next steps:
 ```bash
-cd Mirror
+cd Blaze
 ```
 ```bash
 npm install
