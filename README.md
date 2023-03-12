@@ -1,5 +1,7 @@
 # Blaze
 
+>This program will not function will not function on cloud servers
+
 If you want to run and test the server localy on your device, navigate to your console and run:
 
 ```bash
