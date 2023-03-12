@@ -5,6 +5,7 @@ import * as url from 'url';
 import * as path from 'node:path';
 import { WebSocketServer } from 'ws';
 import mime from 'mime';
+import cors from 'cors'
 
 const app = express();
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -12,7 +13,7 @@ var wss;
 let port = 5001;
 
 app.use(express.json());
-
+app.use(cors({ origin: '*' }))
 app.use(express.static(path.join(__dirname, './content/'), { extensions: ['html'] }));
 
 app.post('/form', (req, res) => {
@@ -23,6 +24,8 @@ app.post('/form', (req, res) => {
 
         wss.on('connection', (conn) => {
             const blazeProxy = express();
+            blazeProxy.use(cors({ origin: '*' }))
+
             const paths = [];
 
             blazeProxy.all('*', async (req, res) => {
@@ -56,49 +59,66 @@ app.post('/form', (req, res) => {
                     paths.push(req.baseUrl + req.path);
 
                     if (file.status != 404 || file.status != 403) {
-                        if (req.path.includes(fileExtension) && req.path !== '/') {
-                            try {
-                                fs.writeFileSync(`./downloads${req.baseUrl + req.path}`, data);
-                            } catch (e) {
-                                console.error(e);
+                        if (!fs.existsSync(`./downloads${req.baseUrl + req.path}`)) {
+                            fs.mkdir(`./downloads${url}`, { recursive: true }, (e) => {
+                                if (e) {
+                                    conn.send(JSON.stringify({
+                                        type: 'error',
+                                        msg: 'An error occoured check the console for more information.',
+                                        timestamp: new Date()
+                                    }));
 
-                                conn.send(JSON.stringify({
-                                    type: 'error',
-                                    msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
-                                    timestamp: new Date()
-                                }));
-                            }
-                        } else if (req.path === '/') {
-                            try {
-                                fs.writeFileSync(`./downloads${req.baseUrl + '/index.html'}`, data);
-                            } catch (e) {
-                                console.error(e);
-
-                                conn.send(JSON.stringify({
-                                    type: 'error',
-                                    msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
-                                    timestamp: new Date()
-                                }));
-                            }
-                        } else if (!req.path.includes(fileExtension)) {
-                            try {
-                                fs.writeFileSync(`./downloads${req.baseUrl + req.path + '.' + fileExtension}`, data);
-                            } catch (e) {
-                                console.error(e);
-
-                                conn.send(JSON.stringify({
-                                    type: 'error',
-                                    msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
-                                    timestamp: new Date()
-                                }));
-                            }
-                        } else {
-                            conn.send(JSON.stringify({
-                                type: 'error',
-                                msg: `An internal error occoured`,
-                                timestamp: new Date()
-                            }));
+                                    console.error(e);
+                                    return res.sendStatus(404);
+                                };
+                            });
                         }
+
+                        setTimeout(() => {
+                            if (req.path.includes(fileExtension) && req.path !== '/') {
+                                try {
+                                    fs.writeFileSync(`./downloads${req.baseUrl + req.path}`, data);
+                                } catch (e) {
+                                    console.error(e);
+
+                                    conn.send(JSON.stringify({
+                                        type: 'error',
+                                        msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
+                                        timestamp: new Date()
+                                    }));
+                                }
+                            } else if (req.path === '/') {
+                                try {
+                                    fs.writeFileSync(`./downloads${req.baseUrl + '/index.html'}`, data);
+                                } catch (e) {
+                                    console.error(e);
+
+                                    conn.send(JSON.stringify({
+                                        type: 'error',
+                                        msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
+                                        timestamp: new Date()
+                                    }));
+                                }
+                            } else if (!req.path.includes(fileExtension)) {
+                                try {
+                                    fs.writeFileSync(`./downloads${req.baseUrl + req.path + '.' + fileExtension}`, data);
+                                } catch (e) {
+                                    console.error(e);
+
+                                    conn.send(JSON.stringify({
+                                        type: 'error',
+                                        msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
+                                        timestamp: new Date()
+                                    }));
+                                }
+                            } else {
+                                conn.send(JSON.stringify({
+                                    type: 'error',
+                                    msg: `An internal error occoured`,
+                                    timestamp: new Date()
+                                }));
+                            }
+                        }, 500)
                     } else if (file.status == 404) {
                         conn.send(JSON.stringify({
                             type: 'error',
@@ -172,11 +192,9 @@ app.post('/form', (req, res) => {
                         timestamp: new Date()
                     }));
 
-                    conn.send(JSON.stringify({
-                        type: 'data',
-                        data: paths,
-                        timestamp: new Date()
-                    }));
+                    setTimeout(() => {
+                        fs.rmSync('./downloads/', { recursive: true, force: true });
+                    }, 1000)
                 } else if (data.action == 'done') {
                     conn.send(JSON.stringify({
                         type: 'action',

@@ -33,6 +33,14 @@ form.addEventListener('submit', (e) => {
                     var done = false;
                     win.focus();
 
+                    window.onfocus = () => {
+                        document.documentElement.click();
+                    }
+
+                    window.onbeforeunload = (e) => {
+                        win.close();
+                    }
+
                     const close = setInterval(() => {
                         if (win.closed && !done) {
                             clearInterval(close);
@@ -43,7 +51,7 @@ form.addEventListener('submit', (e) => {
 
                             location.reload();
                         }
-                    }, 100)
+                    }, 100);
 
                     ws.onmessage = (e) => {
                         const data = JSON.parse(e.data);
@@ -64,6 +72,10 @@ form.addEventListener('submit', (e) => {
                             }
                         }
                     }
+
+                    document.documentElement.addEventListener('click', (e) => {
+                        win.focus();
+                    })
 
                     controls.querySelector('#stop').addEventListener('click', (e) => {
                         ws.send(JSON.stringify({
