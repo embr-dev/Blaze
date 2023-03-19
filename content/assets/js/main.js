@@ -29,7 +29,7 @@ form.addEventListener('submit', (e) => {
                     logs.classList.remove('hidden');
                     controls.classList.remove('hidden');
 
-                    const win = window.open(`http://localhost:${res.port}/${e.srcElement.children.filename.value}`, 'popup', `left=${window.screen.width},top=${window.screen.height},width=600,height=700`);
+                    var win = window.open(`http://localhost:${res.port}/${e.srcElement.children.filename.value}`, 'popup', `left=${window.screen.width},top=${window.screen.height},width=600,height=700`);
                     var done = false;
                     win.focus();
 
@@ -50,8 +50,9 @@ form.addEventListener('submit', (e) => {
                             }));
 
                             location.reload();
+                            //win = window.open(`http://localhost:${res.port}/${e.srcElement.children.filename.value}`, 'popup', `left=${window.screen.width},top=${window.screen.height},width=600,height=700`);
                         }
-                    }, 100);
+                    }, 1);
 
                     ws.onmessage = (e) => {
                         const data = JSON.parse(e.data);

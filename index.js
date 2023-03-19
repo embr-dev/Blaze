@@ -75,7 +75,7 @@ app.post('/form', (req, res) => {
                         }
 
                         setTimeout(() => {
-                            if (req.path.includes(fileExtension) && req.path !== '/') {
+                            if (req.path.includes('.') && req.path !== '/') {
                                 try {
                                     fs.writeFileSync(`./downloads${req.baseUrl + req.path}`, data);
                                 } catch (e) {
@@ -99,7 +99,7 @@ app.post('/form', (req, res) => {
                                         timestamp: new Date()
                                     }));
                                 }
-                            } else if (!req.path.includes(fileExtension)) {
+                            } else if (!req.path.includes('.')) {
                                 try {
                                     fs.writeFileSync(`./downloads${req.baseUrl + req.path + '.' + fileExtension}`, data);
                                 } catch (e) {
