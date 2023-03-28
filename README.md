@@ -4,7 +4,7 @@ Blaze is a tool that allows you to easily download files from websites by proxyi
 
 Please note that Blaze is not designed to be run on cloud servers.
 
-Blaze is still a beta tool, If you encounter any bugs please open an issue so we can fix it.
+Blaze is still a beta tool. If you encounter any bugs please open an issue so we can fix it.
 
 ## Run Blaze Locally
 
