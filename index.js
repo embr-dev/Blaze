@@ -200,7 +200,7 @@ app.post("/form", (req, res) => {
       });
 
       blazeProxyServer.addListener("close", (e) => {
-        console.log(`Your Blaze proxy server has stoped`);
+        console.log(`Your Blaze proxy server has stopped`);
       });
 
       conn.on("message", (e) => {
