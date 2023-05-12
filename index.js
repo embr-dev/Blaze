@@ -1,47 +1,47 @@
-import express from "express";
-import * as fs from "fs";
-import fetch from "node-fetch";
-import * as url from "url";
-import * as path from "node:path";
-import { WebSocketServer } from "ws";
-import mime from "mime";
-import cors from "cors";
+import express from 'express';
+import * as fs from 'fs';
+import fetch from 'node-fetch';
+import * as url from 'url';
+import * as path from 'node:path';
+import { WebSocketServer } from 'ws';
+import mime from 'mime';
+import cors from 'cors';
 
 const app = express();
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 var wss;
 let port = 5001;
 
 app.use(express.json());
-app.use(cors({ origin: "*" }));
-app.use(express.static(path.join(__dirname, "./content/"), { extensions: ["html"] }));
+app.use(cors({ origin: '*' }));
+app.use(express.static(path.join(__dirname, './content/'), { extensions: ['html'] }));
 
-app.post("/form", (req, res) => {
+app.post('/form', (req, res) => {
   const gameUrl = req.body.url;
 
   if (gameUrl) {
-    fs.rmSync("./downloads/", { recursive: true, force: true });
+    fs.rmSync('./downloads/', { recursive: true, force: true });
 
-    wss.on("connection", (conn) => {
+    wss.on('connection', (conn) => {
       const blazeProxy = express();
-      blazeProxy.use(cors({ origin: "*" }));
+      blazeProxy.use(cors({ origin: '*' }));
 
       const paths = [];
 
-      blazeProxy.all("*", async (req, res) => {
+      blazeProxy.all('*', async (req, res) => {
         try {
           const file = await fetch(gameUrl + req.originalUrl);
-          const fileExtension = mime.getExtension(file.headers.get("content-type").split(";")[0].replace("text/javascript", "application/javascript"));
+          const fileExtension = mime.getExtension(file.headers.get('content-type').split(';')[0].replace('text/javascript', 'application/javascript'));
 
           const data = new Buffer.from(await file.arrayBuffer());
 
-          const url = req.baseUrl + req.path.replace(req.baseUrl + req.path.split("\\").pop().split("/").pop(), "");
+          const url = req.baseUrl + req.path.replace(req.baseUrl + req.path.split('\\').pop().split('/').pop(), '');
           fs.mkdir(`./downloads${url}`, { recursive: true }, (e) => {
             if (e) {
               conn.send(
                 JSON.stringify({
-                  type: "error",
-                  msg: "An error occoured check the console for more information.",
+                  type: 'error',
+                  msg: 'An error occoured check the console for more information.',
                   timestamp: new Date(),
                 })
               );
@@ -53,7 +53,7 @@ app.post("/form", (req, res) => {
 
           conn.send(
             JSON.stringify({
-              type: "log",
+              type: 'log',
               msg: req.baseUrl + req.path,
               timestamp: new Date(),
             })
@@ -67,8 +67,8 @@ app.post("/form", (req, res) => {
                 if (e) {
                   conn.send(
                     JSON.stringify({
-                      type: "error",
-                      msg: "An error occoured check the console for more information.",
+                      type: 'error',
+                      msg: 'An error occoured check the console for more information.',
                       timestamp: new Date(),
                     })
                   );
@@ -80,7 +80,7 @@ app.post("/form", (req, res) => {
             }
 
             setTimeout(() => {
-              if (req.path.includes(".") && req.path !== "/") {
+              if (req.path.includes('.') && req.path !== '/') {
                 try {
                   fs.writeFileSync(`./downloads${req.baseUrl + req.path}`, data);
                 } catch (e) {
@@ -88,35 +88,35 @@ app.post("/form", (req, res) => {
 
                   conn.send(
                     JSON.stringify({
-                      type: "error",
+                      type: 'error',
                       msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
                       timestamp: new Date(),
                     })
                   );
                 }
-              } else if (req.path === "/") {
+              } else if (req.path === '/') {
                 try {
-                  fs.writeFileSync(`./downloads${req.baseUrl + "/index.html"}`, data);
+                  fs.writeFileSync(`./downloads${req.baseUrl + '/index.html'}`, data);
                 } catch (e) {
                   console.error(e);
 
                   conn.send(
                     JSON.stringify({
-                      type: "error",
+                      type: 'error',
                       msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
                       timestamp: new Date(),
                     })
                   );
                 }
-              } else if (!req.path.includes(".")) {
+              } else if (!req.path.includes('.')) {
                 try {
-                  fs.writeFileSync(`./downloads${req.baseUrl + req.path + "." + fileExtension}`, data);
+                  fs.writeFileSync(`./downloads${req.baseUrl + req.path + '.' + fileExtension}`, data);
                 } catch (e) {
                   console.error(e);
 
                   conn.send(
                     JSON.stringify({
-                      type: "error",
+                      type: 'error',
                       msg: `An error occoured when trying to write ${req.path} to the disk. Check the console for more information`,
                       timestamp: new Date(),
                     })
@@ -125,7 +125,7 @@ app.post("/form", (req, res) => {
               } else {
                 conn.send(
                   JSON.stringify({
-                    type: "error",
+                    type: 'error',
                     msg: `An internal error occoured`,
                     timestamp: new Date(),
                   })
@@ -135,7 +135,7 @@ app.post("/form", (req, res) => {
           } else if (file.status == 404) {
             conn.send(
               JSON.stringify({
-                type: "error",
+                type: 'error',
                 msg: `Could not find ${req.path}`,
                 timestamp: new Date(),
               })
@@ -143,20 +143,20 @@ app.post("/form", (req, res) => {
           } else if (file.status == 403) {
             conn.send(
               JSON.stringify({
-                type: "error",
+                type: 'error',
                 msg: `Could not access ${req.path}`,
                 timestamp: new Date(),
               })
             );
           }
 
-          res.writeHead(file.status, { "Content-Type": file.headers.get("content-type").split(";")[0] });
+          res.writeHead(file.status, { 'Content-Type': file.headers.get('content-type').split(';')[0] });
           res.end(data);
 
           if (!fileExtension) {
             conn.send(
               JSON.stringify({
-                type: "error",
+                type: 'error',
                 msg: `${req.baseUrl + req.path} has an invalid invalid file type`,
                 timestamp: new Date(),
               })
@@ -165,8 +165,8 @@ app.post("/form", (req, res) => {
         } catch (e) {
           conn.send(
             JSON.stringify({
-              type: "error",
-              msg: "An error occoured check the console for more information",
+              type: 'error',
+              msg: 'An error occoured check the console for more information',
               timestamp: new Date(),
             })
           );
@@ -178,58 +178,58 @@ app.post("/form", (req, res) => {
 
       var blazeProxyServer = blazeProxy.listen();
 
-      blazeProxyServer.addListener("error", (e) => {
-        if (e.message.includes("EADDRINUSE")) {
+      blazeProxyServer.addListener('error', (e) => {
+        if (e.message.includes('EADDRINUSE')) {
           port += 1;
           blazeProxyServer = blazeProxy.listen(port);
         } else {
           console.log(e);
-          console.log("The blaze proxy server encountered an error ^^^^^^^^^^^");
+          console.log('The blaze proxy server encountered an error ^^^^^^^^^^^');
           try {
-            return res.json({ error: true, errorMsg: "The blaze proxy server encountered an error. Please check the logs." });
-          } catch (e) {}
+            return res.json({ error: true, errorMsg: 'The blaze proxy server encountered an error. Please check the logs.' });
+          } catch (e) { }
         }
       });
 
-      blazeProxyServer.addListener("listening", () => {
+      blazeProxyServer.addListener('listening', () => {
         try {
           return res.json({ error: false, port: blazeProxyServer.address().port });
-        } catch (e) {}
+        } catch (e) { }
 
         console.log(`Your Blaze proxy server is running on port ${blazeProxyServer.address().port}`);
       });
 
-      blazeProxyServer.addListener("close", (e) => {
+      blazeProxyServer.addListener('close', (e) => {
         console.log(`Your Blaze proxy server has stopped`);
       });
 
-      conn.on("message", (e) => {
+      conn.on('message', (e) => {
         const data = JSON.parse(e.toString());
 
-        if (data.action == "stop") {
+        if (data.action == 'stop') {
           conn.send(
             JSON.stringify({
-              type: "action",
-              action: "closed",
+              type: 'action',
+              action: 'closed',
               timestamp: new Date(),
             })
           );
 
           setTimeout(() => {
-            fs.rmSync("./downloads/", { recursive: true, force: true });
+            fs.rmSync('./downloads/', { recursive: true, force: true });
           }, 1000);
-        } else if (data.action == "done") {
+        } else if (data.action == 'done') {
           conn.send(
             JSON.stringify({
-              type: "action",
-              action: "closed",
+              type: 'action',
+              action: 'closed',
               timestamp: new Date(),
             })
           );
 
           conn.send(
             JSON.stringify({
-              type: "data",
+              type: 'data',
               data: paths,
               timestamp: new Date(),
             })
@@ -242,7 +242,7 @@ app.post("/form", (req, res) => {
 
 app.use((req, res) => {
   res.status(404);
-  res.sendFile(path.join(url.fileURLToPath(new URL("./content/", import.meta.url)), "/404.html"));
+  res.sendFile(path.join(url.fileURLToPath(new URL('./content/', import.meta.url)), '/404.html'));
 });
 
 const blazeServer = app.listen(5000, () => {
