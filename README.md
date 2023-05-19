@@ -1,4 +1,5 @@
 > Blaze Beta
+> 
 > A new version of blaze will be coming out soon as a desktop app. If you would like to test it please open an issue saying something like "I would like to test blaze".
 
 # Blaze
