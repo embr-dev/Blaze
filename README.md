@@ -1,3 +1,6 @@
+> Blaze Beta
+> A new version of blaze will be coming out soon as a desktop app. If you would like to test it please open an issue saying something like "I would like to test blaze".
+
 # Blaze
 
 Blaze is a tool that allows you to easily download files from websites by proxying them. With Blaze, you can download files such as images, videos, and documents from a website directly to your device.
