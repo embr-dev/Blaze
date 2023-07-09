@@ -1,6 +1,6 @@
 > Blaze Beta
 > 
-> A new version of blaze will be coming out soon as a desktop app. If you would like to test it please open an issue saying something like "I would like to test blaze".
+> Updates on blaze have slowed down beause of summer break. Expect a beta release by September at the latest
 
 # Blaze
 
