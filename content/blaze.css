@@ -1,9 +1,13 @@
 @import url('https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@6.x/css/all.min.css');
 @import url('https://embernetwork.github.io/assets/css/main.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 * {
     scroll-behavior: smooth;
     user-select: none;
+    background-color: #1a1a1a;
+    color: white;
+    font-family: "Inter", sans-serif;
 }
 
 body,
@@ -76,4 +80,47 @@ form {
 
 .logo {
     width: 20vh;
+}
+
+input {
+    width: 300px;
+    height: 50px;
+    border-radius: 7px;
+    border: .5px solid white;
+    transition: 0.5s;
+}
+
+input:focus {
+    border-radius: 12px;
+}
+
+/* CSS */
+.button-62 {
+  background: linear-gradient(to bottom right, #EF4765, #FF9A5A);
+  border: 0;
+  border-radius: 12px;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 2.5;
+  outline: transparent;
+  padding: 0 1rem;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow .2s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.button-62:not([disabled]):focus {
+  box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
+}
+
+.button-62:not([disabled]):hover {
+  box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
 }
